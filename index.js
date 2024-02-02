@@ -28,7 +28,6 @@ mongoose.connect("mongodb+srv://Jenish-Detroja:jenish_9917@cluster0.c06lr7u.mong
         
         app.get('/save/:bookNumber/:bookName/:price', async (req,res)=>{
             try{
-                console.log(req.params.bookNumber)
                 const book = await Book({
                     bookNumber : req.params.bookNumber,
                     bookName : req.params.bookName,
@@ -46,7 +45,6 @@ mongoose.connect("mongodb+srv://Jenish-Detroja:jenish_9917@cluster0.c06lr7u.mong
         app.get('/allBooks', async (req,res)=>{
             try{
                 const books = await  Book.find()
-                console.log(books)
                 res.send(books)
             }catch(e){
                 res.send("error")
@@ -56,17 +54,12 @@ mongoose.connect("mongodb+srv://Jenish-Detroja:jenish_9917@cluster0.c06lr7u.mong
         app.get("/sold/:bookId", async (req,res)=>{
             try{
         
-                console.log(req.params.bookId)
                 const book = await Book.findOne({_id: req.params.bookId})
                 book.isAvailable = false
-                console.log(".........")
-                console.log(book)
                 await book.save()
-                console.log("<<<<<<<<<<<<")
                 if(book.instaLink === ''){
                     res.send('done')
                 }else{
-                    console.log(">>>>>>>>>>>>")
                     res.send(book.instaLink)
                 }
             }catch(e){
@@ -76,10 +69,8 @@ mongoose.connect("mongodb+srv://Jenish-Detroja:jenish_9917@cluster0.c06lr7u.mong
         
         app.post('/instaPost',async (req,res)=>{
             try{
-                console.log(req.body)
         
                 const {books, instaLink } = req.body
-                console.log(books)
                 if(typeof(books) != 'string'){
                     for (bookId of books){
                         const book = await Book.findOne({_id: bookId})
@@ -87,11 +78,7 @@ mongoose.connect("mongodb+srv://Jenish-Detroja:jenish_9917@cluster0.c06lr7u.mong
                         await book.save()
                     }
                 }else if(books != undefined){
-                    console.log('---------')
-                    console.log(books)
                     const book = await Book.findOne({_id: books})
-                    console.log(':::::::::::::::::::::')
-                    console.log(book)
                     book.instaLink = instaLink
                     await book.save()
                 }
