@@ -1,0 +1,68 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <input type="text" oninput="search(this.value)"/> <button>Search</button>
+    <div id="books">
+
+    </div>
+    
+
+    <script>
+
+        allBooks = [];
+        books = document.getElementById("books");
+        availableBoks = [];
+        function bookBlock(bookName, bookNumber, instaLink, bookId){
+
+            return (
+
+                `
+                <details id="1">
+                    <summary>${bookName}</summary>
+                    <ul>
+                        <li>name: ${bookName}</li>
+                        <li>booknumber: ${bookNumber}</li>
+                        <li>link: <a href='${instaLink}'>${instaLink}</a></li>
+                        <li><button onclick='sold("${bookId}")'>sold it !!!</button></li>
+                    </ul>
+                </details>
+                `
+
+            )
+        }
+
+        function sold(bookId){
+            console.log(bookId)
+            fetch(`http://127.0.0.1:3000/sold/${bookId}`).then((res)=>{console.log(res)})
+        }
+
+        fetch('http://127.0.0.1:3000/allBooks').then(res=>res.json()).then(res=>{
+            console.log(res)
+            allBooks = []
+            availableBoks = res.filter((book)=>book.isAvailable)
+
+                for(book of availableBoks){
+                    books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+                }
+            }
+        )
+
+
+        function search(word){
+
+            filtered = availableBoks.filter((book)=>book.bookName.includes(word) )
+            books.innerHTML = ''
+            for(book of filtered){
+                books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+            }
+
+        }
+    </script>
+</body>
+</html>

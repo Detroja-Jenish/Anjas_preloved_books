@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .flex{
+            display: flex;
+            justify-content: space-evenly;
+        }
+        li{
+            position: relative;
+            list-style: none;
+        }
+        li::before{
+            content: "";
+            position: absolute;
+            background-color: red;
+            height: 5px;
+            bottom: -5;
+            left: 0;
+            width: 0px;
+            transition-duration: 0.3s;
+        }
+        li:hover::before{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul class="flex">
+                <li><a href="./addInstaLink.html">add Post</a></li>
+                <li><a href="./allBooks.html">All Books</a></li>
+                <li><a href="#">Add new stock</a></li>
+            </ul>
+        </nav>
+    </header>
+    <input type="text" oninput="search(this.value)"/> <button>Search</button>
+    <div id="books">
+
+    </div>
+    
+
+    <script>
+
+        allBooks = [];
+        books = document.getElementById("books");
+        availableBoks = [];
+        function bookBlock(bookName, bookNumber, instaLink, bookId){
+
+            return (
+
+                `
+                <details id="1">
+                    <summary>${bookName}</summary>
+                    <ul>
+                        <li>name: ${bookName}</li>
+                        <li>booknumber: ${bookNumber}</li>
+                        <li>link: <a href='${instaLink}'>${instaLink}</a></li>
+                        <li><button onclick='sold("${bookId}")'>sold it !!!</button></li>
+                    </ul>
+                </details>
+                `
+
+            )
+        }
+
+        function sold(bookId){
+            console.log(bookId)
+            fetch(`http://127.0.0.1:3000/sold/${bookId}`).then((res)=>{console.log(res)})
+        }
+
+        fetch('http://127.0.0.1:3000/allBooks').then(res=>res.json()).then(res=>{
+            console.log(res)
+            allBooks = []
+            availableBoks = res.filter((book)=>book.isAvailable)
+
+                for(book of availableBoks){
+                    books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+                }
+            }
+        )
+
+
+        function search(word){
+
+            filtered = availableBoks.filter((book)=>book.bookName.includes(word) )
+            books.innerHTML = ''
+            for(book of filtered){
+                
+                books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+            }
+
+        }
+    </script>
+</body>
+</html>
