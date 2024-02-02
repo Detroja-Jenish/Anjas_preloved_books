@@ -38,11 +38,10 @@
         }
 
         function sold(bookId){
-            console.log(bookId)
-            fetch(`http://127.0.0.1:3000/sold/${bookId}`).then((res)=>{console.log(res)})
+            fetch(`https://book-shop-api-0sov.onrender.com/sold/${bookId}`).then((res)=>{console.log(res)})
         }
 
-        fetch('http://127.0.0.1:3000/allBooks').then(res=>res.json()).then(res=>{
+        fetch('https://book-shop-api-0sov.onrender.com/allBooks').then(res=>res.json()).then(res=>{
             console.log(res)
             allBooks = []
             availableBoks = res.filter((book)=>book.isAvailable)

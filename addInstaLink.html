@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -38,59 +38,69 @@
             </ul>
         </nav>
     </header>
-    <input type="text" oninput="search(this.value)"/> <button>Search</button>
-    <div id="books">
-
-    </div>
+    <form id="form" action="https://book-shop-api-0sov.onrender.com/instaPost" method="post">
+        <textarea name="instaLink"></textarea>
+        <br><br>
+        <input type="text" placeholder="search" oninput="search(this.value)"/> <button>Search</button> <input type="submit">
+        <br><br><br>
+        <div id="books">
+            
+        </div>
+    </form>
     
 
     <script>
 
         allBooks = [];
-        books = document.getElementById("books");
         availableBoks = [];
-        function bookBlock(bookName, bookNumber, instaLink, bookId){
+        books = document.getElementById("books");
+
+        function bookBlock(bookName, bookNumber, bookId){
 
             return (
-
                 `
-                <details id="1">
-                    <summary>${bookName}</summary>
-                    <ul>
-                        <li>name: ${bookName}</li>
-                        <li>booknumber: ${bookNumber}</li>
-                        <li>link: <a href='${instaLink}'>${instaLink}</a></li>
-                        <li><button onclick='sold("${bookId}")'>sold it !!!</button></li>
-                    </ul>
-                </details>
+                    <input type='checkbox' value='${bookId}' name='books' id='${bookNumber}'> <label for='${bookNumber}'> ${bookName}</label> <hr>
                 `
+            )
+        }
 
+        function selectedBook(bookName, bookNumber,bookId){
+            return (
+                `
+                    <input id='${bookNumber}' type='checkbox' value='${bookId}' name='books'   checked>  <label for='${bookNumber}'> ${bookName}</label> <hr>
+                `
             )
         }
 
         function sold(bookId){
-            console.log(bookId)
             fetch(`https://book-shop-api-0sov.onrender.com/sold/${bookId}`).then((res)=>{console.log(res)})
         }
 
         fetch('https://book-shop-api-0sov.onrender.com/allBooks').then(res=>res.json()).then(res=>{
-            allBooks = []
+            allBooks = res;
             availableBoks = res.filter((book)=>book.isAvailable)
 
                 for(book of availableBoks){
-                    books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+                    books.innerHTML += bookBlock(book.bookName,book.bookNumber, book._id)
                 }
             }
         )
 
-
         function search(word){
+            data = new FormData(document.getElementById('form'))
 
+            selectedBooks = data.getAll('books')
+
+            selectedBooksOnly = availableBoks.filter((book)=>selectedBooks.includes(book._id))
             filtered = availableBoks.filter((book)=>book.bookName.includes(word) )
+
+
             books.innerHTML = ''
+            for(book of selectedBooksOnly){
+                    books.innerHTML += selectedBook(book.bookName, book.bookNumber, book._id)
+            }
             for(book of filtered){
-                
-                books.innerHTML += bookBlock(book.bookName, book.bookNumber, book.instaLink, book._id)
+                    books.innerHTML += bookBlock(book.bookName,book.bookNumber, book._id)
             }
 
         }
