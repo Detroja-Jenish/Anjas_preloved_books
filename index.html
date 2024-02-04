@@ -86,7 +86,7 @@
 
         function search(word){
 
-            filtered = availableBoks.filter((book)=>book.bookName.includes(word) )
+            filtered = availableBoks.filter((book)=>book.bookNumber.includes(word) )
             books.innerHTML = ''
             for(book of filtered){
                 
